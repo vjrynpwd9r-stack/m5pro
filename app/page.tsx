@@ -1,32 +1,25 @@
-import { Users, Car, ClipboardList, DollarSign } from "lucide-react";
+import { Users } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-const cards = [
-  { label: "Clientes", value: "0", icon: Users, cor: "text-blue-500" },
-  { label: "Veículos", value: "0", icon: Car, cor: "text-green-500" },
-  { label: "OS Abertas", value: "0", icon: ClipboardList, cor: "text-orange-500" },
-  { label: "A Receber", value: "R$ 0,00", icon: DollarSign, cor: "text-emerald-500" },
-];
-
-export default function Home() {
+export default function ClientesPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-zinc-800 mb-6">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.label}
-              className="bg-white rounded-xl p-6 shadow-sm border border-zinc-200"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-zinc-500">{card.label}</span>
-                <Icon className={`w-5 h-5 ${card.cor}`} />
-              </div>
-              <p className="text-2xl font-bold text-zinc-800">{card.value}</p>
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Users className="w-6 h-6 text-zinc-600" />
+          <h1 className="text-2xl font-bold text-zinc-800">Clientes</h1>
+        </div>
+        <Link href="/clientes/novo">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+            + Novo Cliente
+          </Button>
+        </Link>
+      </div>
+
+      <div className="bg-white rounded-xl border border-zinc-200 shadow-sm p-8 text-center text-zinc-400">
+        <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
+        <p className="text-sm">Nenhum cliente cadastrado ainda.</p>
       </div>
     </div>
   );
