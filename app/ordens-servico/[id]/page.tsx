@@ -96,6 +96,9 @@ export default function OSDetalhe() {
             {statusLabel[os.status]}
           </span>
         </div>
+        <Button variant="outline" onClick={() => router.push(`/ordens-servico/${id}/editar`)}>
+          Editar
+        </Button>
         <Button variant="outline" onClick={() => router.push("/ordens-servico")}>
           Voltar
         </Button>
