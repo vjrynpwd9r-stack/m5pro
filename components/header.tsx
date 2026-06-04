@@ -11,7 +11,7 @@ const perfilLabel: Record<string, string> = {
 };
 
 export function Header() {
-  const { usuario } = useAuth();
+  const { usuario, loading } = useAuth();
 
   return (
     <header className="bg-[#0f1729] text-white px-6 py-3 flex items-center justify-between shadow-md">
@@ -22,7 +22,7 @@ export function Header() {
         <span className="text-xs text-slate-400">
           {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
         </span>
-        {usuario && (
+        {!loading && usuario && (
           <div className="flex items-center gap-3 border-l border-slate-700 pl-4">
             <div className="text-right">
               <p className="text-xs font-medium text-white">{usuario.nome}</p>

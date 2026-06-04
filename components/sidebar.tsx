@@ -27,20 +27,23 @@ const menu = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { usuario } = useAuth();
+  const { usuario, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <aside className="w-20 min-h-screen bg-[#0f1729]" />
+    );
+  }
 
   const menuFiltrado = menu.filter((item) =>
     usuario ? temPermissao(usuario.perfil, item.modulo) : false
   );
 
   return (
-   <aside className="w-20 min-h-screen bg-[#0f1729] text-white flex flex-col items-center py-2 gap-1 overflow-y-auto">
-       {/* Logo */}
-      <div className="flex flex-col items-center justify-center mb-4 mt-2 px-2">
+    <aside className="w-20 min-h-screen bg-[#0f1729] text-white flex flex-col items-center py-2 gap-1 overflow-y-auto">
+      <div className="flex flex-col items-center justify-center mb-4 mt-0 px-2">
         <img src="/logo.png" alt="M5 Blindados" className="w-14 object-contain" />
       </div>
-
-      {/* Menu */}
       {menuFiltrado.map((item) => {
         const Icon = item.icon;
         const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
