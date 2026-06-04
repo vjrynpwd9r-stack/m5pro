@@ -78,6 +78,28 @@ export default function OSDetalhe() {
     setAtualizandoStatus(true);
     const extra = novoStatus === "concluida" ? { data_conclusao: new Date().toISOString() } : {};
     await supabase.from("ordens_servico").update({ status: novoStatus, ...extra }).eq("id", id);
+
+    // Ao concluir, gera lançamento financeiro automaticamente se não existir
+    if (novoStatus === "concluida" && os) {
+      const { data: lancamentoExistente } = await supabase
+        .from("financeiro_lancamentos")
+        .select("id")
+        .eq("os_id", id)
+        .single();
+
+      if (!lancamentoExistente) {
+        await supabase.from("financeiro_lancamentos").insert([{
+          os_id: id,
+          tipo: "receita",
+          categoria: "Ordem de Serviço",
+          descricao: `OS #${os.numero} — ${os.clientes?.nome}`,
+          valor: os.total_geral,
+          data_vencimento: new Date().toISOString().split("T")[0],
+          status: "pendente",
+        }]);
+      }
+    }
+
     setOs((o) => o ? { ...o, status: novoStatus } : o);
     setAtualizandoStatus(false);
   }
