@@ -10,19 +10,28 @@ import {
   DollarSign,
   Package,
   Wrench,
+  UserCog,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { temPermissao } from "@/lib/auth";
 
 const menu = [
-  { label: "Início", href: "/", icon: LayoutDashboard },
-  { label: "Clientes", href: "/clientes", icon: Users },
-  { label: "Veículos", href: "/veiculos", icon: Car },
-  { label: "OS", href: "/ordens-servico", icon: ClipboardList },
-  { label: "Financeiro", href: "/financeiro", icon: DollarSign },
-  { label: "Estoque", href: "/estoque", icon: Package },
+  { label: "Início", href: "/", icon: LayoutDashboard, modulo: "dashboard" },
+  { label: "Clientes", href: "/clientes", icon: Users, modulo: "clientes" },
+  { label: "Veículos", href: "/veiculos", icon: Car, modulo: "veiculos" },
+  { label: "OS", href: "/ordens-servico", icon: ClipboardList, modulo: "os" },
+  { label: "Financeiro", href: "/financeiro", icon: DollarSign, modulo: "financeiro" },
+  { label: "Estoque", href: "/estoque", icon: Package, modulo: "estoque" },
+  { label: "Usuários", href: "/usuarios", icon: UserCog, modulo: "usuarios" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { usuario } = useAuth();
+
+  const menuFiltrado = menu.filter((item) =>
+    usuario ? temPermissao(usuario.perfil, item.modulo) : false
+  );
 
   return (
     <aside className="w-20 min-h-screen bg-[#0f1729] text-white flex flex-col items-center py-4 gap-1">
@@ -35,7 +44,7 @@ export function Sidebar() {
       </div>
 
       {/* Menu */}
-      {menu.map((item) => {
+      {menuFiltrado.map((item) => {
         const Icon = item.icon;
         const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
         return (
