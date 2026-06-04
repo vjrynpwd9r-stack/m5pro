@@ -1,3 +1,4 @@
+import { LogoutButton } from "@/components/logout-button";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
               <span className="text-xs text-slate-400">
                 {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
               </span>
+              <LogoutButton />
             </div>
           </header>
           <main className="flex-1 p-8 overflow-auto">
