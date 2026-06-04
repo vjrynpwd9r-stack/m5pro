@@ -35,12 +35,9 @@ export function Sidebar() {
 
   return (
     <aside className="w-20 min-h-screen bg-[#0f1729] text-white flex flex-col items-center py-4 gap-1">
-      {/* Logo */}
-      <div className="flex flex-col items-center justify-center mb-6 mt-2">
-        <div className="bg-orange-500 rounded-xl p-2">
-          <Wrench className="w-6 h-6 text-white" />
-        </div>
-        <span className="text-[10px] font-bold text-orange-400 mt-1 tracking-widest">M5PRO</span>
+       {/* Logo */}
+      <div className="flex flex-col items-center justify-center mb-4 mt-2 px-2">
+        <img src="/logo.png" alt="M5 Blindados" className="w-14 object-contain" />
       </div>
 
       {/* Menu */}
