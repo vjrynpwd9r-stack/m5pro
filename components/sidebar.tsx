@@ -34,7 +34,7 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="w-20 min-h-screen bg-[#0f1729] text-white flex flex-col items-center py-4 gap-1">
+   <aside className="w-20 min-h-screen bg-[#0f1729] text-white flex flex-col items-center py-2 gap-1 overflow-y-auto">
        {/* Logo */}
       <div className="flex flex-col items-center justify-center mb-4 mt-2 px-2">
         <img src="/logo.png" alt="M5 Blindados" className="w-14 object-contain" />
