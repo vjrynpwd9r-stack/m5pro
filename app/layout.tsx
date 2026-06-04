@@ -28,11 +28,23 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex">
+      <body className="min-h-full flex bg-slate-100">
         <Sidebar />
-        <main className="flex-1 bg-zinc-50 p-8 overflow-auto">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col min-h-screen">
+          <header className="bg-[#0f1729] text-white px-6 py-3 flex items-center justify-between shadow-md">
+            <h1 className="text-sm font-semibold text-slate-300 tracking-wide">
+              Sistema de Gestão de Oficina Mecânica
+            </h1>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400">
+                {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}
+              </span>
+            </div>
+          </header>
+          <main className="flex-1 p-8 overflow-auto">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );
