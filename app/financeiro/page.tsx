@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
 type Lancamento = {
@@ -33,6 +34,7 @@ const statusLabel: Record<string, string> = {
 export default function FinanceiroPage() {
   const router = useRouter();
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
+  const [busca, setBusca] = useState("");
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState("todos");
 
@@ -53,6 +55,16 @@ export default function FinanceiroPage() {
     }
     carregar();
   }, [filtro]);
+
+  const filtrados = lancamentos.filter((l) => {
+    const termo = busca.toLowerCase();
+    return (
+      l.descricao?.toLowerCase().includes(termo) ||
+      l.categoria?.toLowerCase().includes(termo) ||
+      l.forma_pagamento?.toLowerCase().includes(termo) ||
+      statusLabel[l.status]?.toLowerCase().includes(termo)
+    );
+  });
 
   const totalReceitas = lancamentos
     .filter((l) => l.tipo === "receita" && l.status === "pago")
@@ -97,7 +109,7 @@ export default function FinanceiroPage() {
         </div>
       </div>
 
-      {/* Filtros */}
+      {/* Filtros e busca */}
       <div className="flex gap-2 mb-4">
         {["todos", "receita", "despesa", "pendente"].map((f) => (
           <button
@@ -114,14 +126,24 @@ export default function FinanceiroPage() {
         ))}
       </div>
 
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+        <Input
+          placeholder="Buscar por descrição, categoria ou forma de pagamento..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       {/* Tabela */}
       <div className="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
         {loading ? (
           <p className="p-8 text-center text-zinc-400 text-sm">Carregando...</p>
-        ) : lancamentos.length === 0 ? (
+        ) : filtrados.length === 0 ? (
           <div className="p-8 text-center text-zinc-400">
             <DollarSign className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Nenhum lançamento encontrado.</p>
+            <p className="text-sm">{busca ? "Nenhum lançamento encontrado." : "Nenhum lançamento encontrado."}</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -136,7 +158,7 @@ export default function FinanceiroPage() {
               </tr>
             </thead>
             <tbody>
-              {lancamentos.map((l) => (
+              {filtrados.map((l) => (
                 <tr
                   key={l.id}
                   onClick={() => router.push(`/financeiro/${l.id}`)}

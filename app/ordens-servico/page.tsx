@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
 type OS = {
@@ -36,6 +37,7 @@ const statusLabel: Record<string, string> = {
 export default function OrdensServicoPage() {
   const router = useRouter();
   const [ordens, setOrdens] = useState<OS[]>([]);
+  const [busca, setBusca] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +51,18 @@ export default function OrdensServicoPage() {
     }
     carregar();
   }, []);
+
+  const filtrados = ordens.filter((os) => {
+    const termo = busca.toLowerCase();
+    return (
+      os.numero?.toString().includes(termo) ||
+      os.clientes?.nome?.toLowerCase().includes(termo) ||
+      os.veiculos?.placa?.toLowerCase().includes(termo) ||
+      os.veiculos?.modelo?.toLowerCase().includes(termo) ||
+      os.descricao_problema?.toLowerCase().includes(termo) ||
+      statusLabel[os.status]?.toLowerCase().includes(termo)
+    );
+  });
 
   return (
     <div>
@@ -65,13 +79,24 @@ export default function OrdensServicoPage() {
         </Button>
       </div>
 
+      {/* Busca */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+        <Input
+          placeholder="Buscar por número, cliente, placa, modelo ou status..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       <div className="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
         {loading ? (
           <p className="p-8 text-center text-zinc-400 text-sm">Carregando...</p>
-        ) : ordens.length === 0 ? (
+        ) : filtrados.length === 0 ? (
           <div className="p-8 text-center text-zinc-400">
             <ClipboardList className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Nenhuma ordem de serviço ainda.</p>
+            <p className="text-sm">{busca ? "Nenhuma OS encontrada." : "Nenhuma ordem de serviço ainda."}</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -86,7 +111,7 @@ export default function OrdensServicoPage() {
               </tr>
             </thead>
             <tbody>
-              {ordens.map((os) => (
+              {filtrados.map((os) => (
                 <tr
                   key={os.id}
                   onClick={() => router.push(`/ordens-servico/${os.id}`)}

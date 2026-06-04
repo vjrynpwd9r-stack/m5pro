@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Package } from "lucide-react";
+import { Package, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
 type Peca = {
@@ -21,6 +22,7 @@ type Peca = {
 export default function EstoquePage() {
   const router = useRouter();
   const [pecas, setPecas] = useState<Peca[]>([]);
+  const [busca, setBusca] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +36,15 @@ export default function EstoquePage() {
     }
     carregar();
   }, []);
+
+  const filtrados = pecas.filter((p) => {
+    const termo = busca.toLowerCase();
+    return (
+      p.descricao?.toLowerCase().includes(termo) ||
+      p.codigo?.toLowerCase().includes(termo) ||
+      p.unidade?.toLowerCase().includes(termo)
+    );
+  });
 
   const abaixoMinimo = pecas.filter((p) => p.estoque_atual <= p.estoque_minimo);
 
@@ -60,13 +71,24 @@ export default function EstoquePage() {
         </div>
       )}
 
+      {/* Busca */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+        <Input
+          placeholder="Buscar por código ou descrição..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       <div className="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
         {loading ? (
           <p className="p-8 text-center text-zinc-400 text-sm">Carregando...</p>
-        ) : pecas.length === 0 ? (
+        ) : filtrados.length === 0 ? (
           <div className="p-8 text-center text-zinc-400">
             <Package className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Nenhuma peça cadastrada ainda.</p>
+            <p className="text-sm">{busca ? "Nenhuma peça encontrada." : "Nenhuma peça cadastrada ainda."}</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -82,7 +104,7 @@ export default function EstoquePage() {
               </tr>
             </thead>
             <tbody>
-              {pecas.map((p) => (
+              {filtrados.map((p) => (
                 <tr
                   key={p.id}
                   onClick={() => router.push(`/estoque/${p.id}`)}

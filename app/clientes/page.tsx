@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users } from "lucide-react";
+import { Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
 type Cliente = {
@@ -20,6 +21,7 @@ type Cliente = {
 export default function ClientesPage() {
   const router = useRouter();
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [busca, setBusca] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,6 +35,17 @@ export default function ClientesPage() {
     }
     carregar();
   }, []);
+
+  const filtrados = clientes.filter((c) => {
+    const termo = busca.toLowerCase();
+    return (
+      c.nome?.toLowerCase().includes(termo) ||
+      c.cpf_cnpj?.toLowerCase().includes(termo) ||
+      c.telefone?.toLowerCase().includes(termo) ||
+      c.email?.toLowerCase().includes(termo) ||
+      c.cidade?.toLowerCase().includes(termo)
+    );
+  });
 
   return (
     <div>
@@ -49,13 +62,24 @@ export default function ClientesPage() {
         </Button>
       </div>
 
+      {/* Busca */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+        <Input
+          placeholder="Buscar por nome, CPF, telefone, e-mail ou cidade..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       <div className="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
         {loading ? (
           <p className="p-8 text-center text-zinc-400 text-sm">Carregando...</p>
-        ) : clientes.length === 0 ? (
+        ) : filtrados.length === 0 ? (
           <div className="p-8 text-center text-zinc-400">
             <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Nenhum cliente cadastrado ainda.</p>
+            <p className="text-sm">{busca ? "Nenhum cliente encontrado." : "Nenhum cliente cadastrado ainda."}</p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -69,7 +93,7 @@ export default function ClientesPage() {
               </tr>
             </thead>
             <tbody>
-              {clientes.map((c) => (
+              {filtrados.map((c) => (
                 <tr
                   key={c.id}
                   onClick={() => router.push(`/clientes/${c.id}`)}
