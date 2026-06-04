@@ -9,9 +9,11 @@ import {
   DollarSign,
   Package,
   Wrench,
+  LayoutDashboard,
 } from "lucide-react";
 
 const menu = [
+  { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Clientes", href: "/clientes", icon: Users },
   { label: "Veículos", href: "/veiculos", icon: Car },
   { label: "Ordens de Serviço", href: "/ordens-servico", icon: ClipboardList },
